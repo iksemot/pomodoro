@@ -1,4 +1,4 @@
-import { html, render } from '../../node_modules/lit-html/lit-html.js';
+import { html, render } from 'lit-html';
 
 export class HelloWorld extends HTMLElement {
   constructor() {
@@ -8,8 +8,9 @@ export class HelloWorld extends HTMLElement {
   }
 
   update () {
-    render(this.template(), this.shadowRoot, { eventContext: this })
+    render(this.template(), this.shadowRoot as DocumentFragment, { eventContext: this })
   }
+
   template () {
     return html`
     <style>
