@@ -1,49 +1,50 @@
 import { html, render } from 'lit-html';
 
+function formatTimeLeft (timer: number): string {
+  if (timer === undefined) return '-- : --'
+
+  let minutes: string = `${Math.trunc(timer / 1000 / 60)}`
+  let seconds: string = `${Math.trunc(timer / 1000 % 60)}`
+
+  if (minutes.length === 1) minutes = `0${minutes}`
+  if (seconds.length === 1) seconds = `0${seconds}`
+
+  return `${minutes}m ${seconds}s`
+}
+
 class Timer {
   private timerValue: number
   private startTimestamp: number
   private isPaused: boolean
-  private pauseTimestamp: number
 
   constructor() {
     this.timerValue = 25 * 60 * 1000
-    this.startTimestamp = this.pauseTimestamp = Date.now()
+    this.startTimestamp = Date.now()
     this.isPaused = true
   }
 
-  format (): string {
-    const timer: number = this.getTimeLeft()
-    let minutes: string = `${Math.trunc(timer / 1000 / 60)}`
-    let seconds: string = `${Math.trunc(timer / 1000 % 60)}`
-
-    if (minutes.length === 1) minutes = `0${minutes}`
-    if (seconds.length === 1) seconds = `0${seconds}`
-
-    return `${minutes}m ${seconds}s`
-  }
-
   getTimeLeft(): number {
-    const now = this.isPaused ? this.pauseTimestamp : Date.now()
+    if (this.isPaused) return this.timerValue
+
+    const now = Date.now()
     const timePassed = now - this.startTimestamp
     const timeLeft = this.timerValue - timePassed
 
-    return timeLeft
+    return timeLeft > 0 ? timeLeft : 0
   }
 
   pause(): void {
     if (this.isPaused) return
 
-    this.isPaused = true
-    this.pauseTimestamp = Date.now()
     this.timerValue = this.getTimeLeft()
+    this.isPaused = true
   }
 
   resume(): void {
     if (!this.isPaused) return
 
-    this.isPaused = false
     this.startTimestamp = Date.now()
+    this.isPaused = false
   }
 }
 
@@ -83,13 +84,13 @@ export class PomodoroTimer extends HTMLElement {
 
   update () {
     render(this.template(), this.shadowRoot as DocumentFragment, { eventContext: this })
-    setTimeout(() => {
-      this.update()
-    }, 1000)
+    setTimeout(() => this.update(), 1000)
   }
 
   template () {
-    const timer = this.timer?.format() || '-- : --'
+    const timeLeft = this.timer?.getTimeLeft()
+    const timer = formatTimeLeft(timeLeft)
+
     return html`
     <style>
         p {

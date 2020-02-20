@@ -39,6 +39,18 @@ describe('Pomodoro Timer', function () {
       .shadowContains('00m 00s')
   })
 
+  it('Changes and stays at 00m 00m after 30 minutes', function () {
+    cy
+      .shadowGet('pomodoro-timer')
+      .shadowContains('25m 00s')
+
+    cy.tick(30 * 60 * 1000)
+
+    cy
+      .shadowGet('pomodoro-timer')
+      .shadowContains('00m 00s')
+  })
+
   it('Does not change if the enabled is false', function () {
     cy.tick(1 * 60 * 1000)
 
@@ -67,12 +79,15 @@ describe('Pomodoro Timer', function () {
     cy
       .shadowGet('pomodoro-timer')
       .shadowContains('24m 00s')
+
+    cy
+      .shadowGet('pomodoro-timer')
       .invoke('attr', {'enabled': true})
 
     cy.tick(1 * 60 * 1000)
 
     cy
       .shadowGet('pomodoro-timer')
-      .shadowContains('24m 00s')
+      .shadowContains('23m 00s')
   })
 })
