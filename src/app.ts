@@ -1,5 +1,5 @@
-import { HelloWorld } from './components/hello-world'
+import { PomodoroTimer } from './components/pomodoro-timer'
 
-customElements.define('hello-world', HelloWorld);
+customElements.define('pomodoro-timer', PomodoroTimer);
 
-document.body.innerHTML = `<hello-world></hello-world>`;
+document.body.innerHTML = `<pomodoro-timer></pomodoro-timer>`;
